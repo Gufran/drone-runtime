@@ -35,6 +35,34 @@ func TestLineWriter(t *testing.T) {
 	}
 }
 
+func TestLineWriterSingle(t *testing.T) {
+	line := &Line{}
+	hook := &Hook{}
+	state := &State{}
+
+	hook.GotLine = func(_ *State, l *Line) error {
+		line = l
+		return nil
+	}
+	state.hook = hook
+	state.Step = &engine.Step{}
+	state.config = &engine.Spec{}
+
+	lw := newWriter(state)
+	lw.num = 5
+	lw.Write([]byte("foo\n"))
+
+	if line == nil {
+		t.Error("Expect LineFunc invoked")
+	}
+	if got, want := line.Message, "foo\n"; got != want {
+		t.Errorf("Got line %q, want %q", got, want)
+	}
+	if got, want := line.Number, 5; got != want {
+		t.Errorf("Got line %d, want %d", got, want)
+	}
+}
+
 func TestLineWriterMulti(t *testing.T) {
 	var lines []*Line
 	hook := &Hook{}
