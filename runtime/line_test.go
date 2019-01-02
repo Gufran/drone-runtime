@@ -35,6 +35,32 @@ func TestLineWriter(t *testing.T) {
 	}
 }
 
+func TestLineWriterMulti(t *testing.T) {
+	var lines []*Line
+	hook := &Hook{}
+	state := &State{}
+
+	hook.GotLine = func(_ *State, l *Line) error {
+		lines = append(lines, l)
+		return nil
+	}
+	state.hook = hook
+	state.Step = &engine.Step{}
+	state.config = &engine.Spec{}
+
+	newWriter(state).Write([]byte("foo\nbar\nbaz"))
+
+	if len(lines) != 3 {
+		t.Error("Expect LineFunc invoked")
+	}
+	if got, want := lines[1].Message, "bar\n"; got != want {
+		t.Errorf("Got line %q, want %q", got, want)
+	}
+	if got, want := lines[1].Number, 1; got != want {
+		t.Errorf("Got line %d, want %d", got, want)
+	}
+}
+
 func TestLineReplacer(t *testing.T) {
 	secrets := []*engine.Secret{
 		{Metadata: engine.Metadata{Name: "foo"}, Data: "bar"},
