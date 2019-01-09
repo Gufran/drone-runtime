@@ -29,6 +29,24 @@ func TestParse(t *testing.T) {
 	}
 }
 
+func TestParseGCR(t *testing.T) {
+	got, err := ParseFile("testdata/config_gcr.json")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	want := []*engine.DockerAuth{
+		{
+			Address:  "gcr.io",
+			Username: "_json_key",
+			Password: "xxx:bar\n",
+		},
+	}
+	if diff := cmp.Diff(got, want); diff != "" {
+		t.Errorf(diff)
+	}
+}
+
 func TestParseErr(t *testing.T) {
 	_, err := ParseString("")
 	if err == nil {
@@ -77,13 +95,6 @@ func Test_encodeDecode(t *testing.T) {
 
 func Test_decodeInvalid(t *testing.T) {
 	username, password := decode("b2N0b2NhdDp==")
-	if username != "" || password != "" {
-		t.Errorf("Expect decoding error")
-	}
-}
-
-func Test_decodeEmpty(t *testing.T) {
-	username, password := decode("b2N0b2NhdDpoZWxsbzp3b3JsZA==")
 	if username != "" || password != "" {
 		t.Errorf("Expect decoding error")
 	}
