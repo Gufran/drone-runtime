@@ -239,6 +239,13 @@ func toPod(spec *engine.Spec, step *engine.Step) *v1.Pod {
 	mounts = append(mounts, toVolumeMounts(spec, step)...)
 	mounts = append(mounts, toConfigMounts(spec, step)...)
 
+	var pullSecrets []v1.LocalObjectReference
+	if len(spec.Docker.Auths) > 0 {
+		pullSecrets = []v1.LocalObjectReference{{
+			Name: "docker-auth-config", // TODO move name to a const
+		}}
+	}
+
 	return &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      step.Metadata.UID,
@@ -263,7 +270,8 @@ func toPod(spec *engine.Spec, step *engine.Step) *v1.Pod {
 				Ports:        toPorts(step),
 				Resources:    toResources(step),
 			}},
-			Volumes: volumes,
+			ImagePullSecrets: pullSecrets,
+			Volumes:          volumes,
 		},
 	}
 }
