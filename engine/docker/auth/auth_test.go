@@ -115,6 +115,21 @@ func TestEncode(t *testing.T) {
 	}
 }
 
+func TestMarshal(t *testing.T) {
+	auths := []*engine.DockerAuth{
+		{
+			Address:  "index.docker.io",
+			Username: "octocat",
+			Password: "correct-horse-battery-staple",
+		},
+	}
+	got, _ := Marshal(auths)
+	want := []byte(`{"auths":{"index.docker.io":{"auth":"b2N0b2NhdDpjb3JyZWN0LWhvcnNlLWJhdHRlcnktc3RhcGxl"}}}`)
+	if bytes.Equal(got, want) == false {
+		t.Errorf("Could not decode credential header")
+	}
+}
+
 var sample = `{
 	"auths": {
 		"https://index.docker.io/v1/": {
