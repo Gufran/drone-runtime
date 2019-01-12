@@ -108,7 +108,7 @@ func Marshal(list []*engine.DockerAuth) ([]byte, error) {
 	out.Auths = map[string]auths{}
 	for _, item := range list {
 		out.Auths[item.Address] = auths{
-			Auth: Encode(
+			Auth: encode(
 				item.Username,
 				item.Password,
 			),
