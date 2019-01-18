@@ -153,7 +153,7 @@ func toVolumes(spec *engine.Spec, step *engine.Step) []v1.Volume {
 			// between pods. This means we are responsible for deleting
 			// these directories.
 			volume.HostPath = &v1.HostPathVolumeSource{
-				Path: filepath.Join("/tmp", "drone", spec.Metadata.Namespace, vol.Metadata.Namespace),
+				Path: filepath.Join("/tmp", "drone", spec.Metadata.Namespace, vol.Metadata.UID),
 				Type: &source,
 			}
 		}
