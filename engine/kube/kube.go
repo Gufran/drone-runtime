@@ -99,6 +99,11 @@ func (e *kubeEngine) Setup(ctx context.Context, spec *engine.Spec) error {
 		}
 	}
 
+	// drone creates host machine mounts for the workspace
+	// in a temporary directory. If this directory does not
+	// exist on the host machine it should be created.
+	os.MkdirAll("/tmp/drone", 0644)
+
 	// pv := toPersistentVolume(e.node, spec.Metadata.Namespace, spec.Metadata.Namespace, filepath.Join("/tmp", spec.Metadata.Namespace))
 	// _, err = e.client.CoreV1().PersistentVolumes().Create(pv)
 	// if err != nil {
